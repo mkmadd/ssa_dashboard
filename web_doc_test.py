@@ -11,6 +11,14 @@ from os import getenv
 from datetime import datetime, timedelta
 from natsort import natsorted
 from itertools import groupby
+import gdata.docs.client
+import re
+
+ROW_RE = re.compile('<span>(.*?)</span>')
+TEMP_FILE = 'transitory.txt'
+DOCUMENT_NAME = 'SSA Doc' # google docs name
+username = getenv('GOOG_UID') # google/gmail login id
+passwd = getenv('GOOG_PWD') # google/gmail login password
 
 server = getenv('SSA_SERVER')
 db = getenv('SSA_DATABASE')
@@ -41,42 +49,30 @@ def get_time_int(time):
 
     return (time_floor, time_ceiling)
 
+def load_docs():
+    client = gdata.docs.client.DocsClient(source='drive_test')
+    client.ClientLogin(username, passwd, client.source)
+    return client
 
-def get_latest_updates():
-    # Get numbers from LOG_INVENTORY, JOIN with STORAGE to get tank and product
-    # names, then JOIN with SITE to get store names, excluding 
-    # STORAGE_TYPE_ID 102, which doesn't show up in SSA website
-    test_query = """SELECT tank_names.*, SITE.NAME FROM 
-        (SELECT last.*, sto.NAME, sto.PRODUCT_NAME
-        FROM (SELECT I1.SITE_ID, I1.STORAGE_ID, I1.STORAGE_TYPE_ID, 
-        I1.GROSS_VOLUME, I1.ULLAGE, I1.GROSS_WATER_VOLUME, I1.LAST_UPDATED
-            FROM LOG_INVENTORY I1
-            JOIN (
-                SELECT MAX(LAST_UPDATED) AS LAST_UPDATED, SITE_ID, 
-                STORAGE_ID, STORAGE_TYPE_ID
-                FROM LOG_INVENTORY
-                GROUP BY SITE_ID, STORAGE_ID, STORAGE_TYPE_ID) as I2
-                ON I1.SITE_ID = I2.SITE_ID AND
-                I1.STORAGE_ID = I2.STORAGE_ID AND
-                I1.STORAGE_TYPE_ID = I2.STORAGE_TYPE_ID AND
-                I1.LAST_UPDATED = I2.LAST_UPDATED
-            WHERE I1.STORAGE_TYPE_ID <> 102) last
-        RIGHT JOIN STORAGE sto
-        ON last.STORAGE_ID = sto.STORAGE_ID AND
-        last.STORAGE_TYPE_ID = sto.STORAGE_TYPE_ID AND
-        last.SITE_ID = sto.SITE_ID) tank_names
-        RIGHT JOIN SITE
-        ON tank_names.SITE_ID = SITE.SITE_ID
-    ORDER BY tank_names.SITE_ID
-    """
-    conn = pyodbc.connect(connection_string)
-    cursor = conn.cursor()
-    cursor.execute(test_query)
-    rows = cursor.fetchall()
-    cursor.close()
-    del cursor
-    conn.close()
-    
+def retrieve_doc():
+    client = load_docs()
+    doc_list = client.get_resources()
+    docs = []
+    for i in doc_list.entry:
+        docs.append(i.title.text)
+    doc_num = None
+    for i, j in enumerate(docs):
+        if j == DOCUMENT_NAME:
+            doc_num = i
+    if doc_num == None:
+        return 0
+        
+    entry = doc_list.entry[doc_num]
+    content = client.download_resource_to_memory(entry)
+    rows = ROW_RE.findall(content)
+    if rows:
+        for row in rows:
+            row = row.split(',')
     return rows
 
 def fix_name(name):
@@ -100,6 +96,7 @@ def fix_name(name):
 # 9. NAME (store)
 def format_stores(rows):
     sorted_rows = natsorted(rows, key=lambda x: x[-1])
+    print 'ha'
     stores = []
     for name, tanks in groupby(sorted_rows, lambda x: x[9]):
         store = {}
@@ -110,10 +107,10 @@ def format_stores(rows):
             new_tank = {}
             new_tank['tank_name'] = fix_name(tank[7])
             new_tank['product_name'] = fix_name(tank[8])
-            new_tank['water_vol'] = tank[5]
-            max = tank[3] + tank[4] + tank[5]
+            new_tank['water_vol'] = float(tank[5])
+            max = float(tank[3]) + float(tank[4]) + float(tank[5])
             new_tank['max_capacity'] = max
-            new_tank['capacity'] = float(tank[3] + tank[5]) / max
+            new_tank['capacity'] = (float(tank[3]) + float(tank[5])) / max
             new_tank['last_updated'] = tank[6]
             tank_info.append(new_tank)
             
@@ -128,19 +125,10 @@ def format_stores(rows):
 @route('/')
 @view('index')
 def index():
-    # colors: blue #00f, yellow #ff0, green #0f0
-#    test_str = '<b>Hello {{name}}</b>! \n {{names}}\n'\
-#                '<svg height=50><g>'\
-#                '<rect y="0" x="0" width="150" height="20" fill="#000"></rect>'\
-#                '<rect y="1" x="1" width="148" height="18" fill="#fff"></rect>'\
-#                '<rect y="1" x="1" width="5" height="18" fill="#00f"></rect>'\
-#                '<rect y="1" x="6" width="100" height="18" fill="#0f0"></rect>'\
-#                '</g></svg>'
-    #return template(test_str, name=name, names=column_names)
-    rows = get_latest_updates()
-    stores = format_stores(rows)
-    #store_boxes = format_stores(rows)
-    return { 'url': url, 'stores': stores } #template('test_template', rows=rows)
+    rows = retrieve_doc()
+    print 'ho'
+    #stores = format_stores(rows)
+    return { 'url': url, 'stores': rows }
 
 @route('/static/:path#.+#', name='static')
 def static(path):

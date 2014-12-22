@@ -6,6 +6,7 @@ This is a temporary script file.
 """
 
 import pyodbc
+from os import getenv
 from datetime import datetime, timedelta
 
 server = getenv('SSA_SERVER')

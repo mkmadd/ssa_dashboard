@@ -1,3 +1,5 @@
-# Don't track transitory.txt
-# It's a temp file used by the program
+# a temp file used by the program
 transitory.txt
+
+# google drive api secrets (not used)
+client_secrets.json
