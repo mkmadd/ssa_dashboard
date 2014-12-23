@@ -119,8 +119,16 @@ def format_stores(rows):
             
         # Find the row with the earliest time to use at the last update
         earliest = min(tank_info, key=lambda x: x['last_updated'])
-        store['last_updated'] = earliest['last_updated'].strftime('%I:%M %p')
-
+        store['last_update_time'] = earliest['last_updated'].strftime('%I:%M %p')
+        store['last_update_date'] = earliest['last_updated'].strftime("%b %d, '%y")
+        if earliest['last_updated'].date() != datetime.today().date():
+            store['date_expired'] = True
+        else:
+            store['date_expired'] = False
+        if (earliest['last_updated'] + timedelta(minutes=15)) < datetime.now():
+            store['time_expired'] = True
+        else:
+            store['time_expired'] = False
         store['tanks'] = tank_info
         stores.append(store)
     return stores

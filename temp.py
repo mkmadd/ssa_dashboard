@@ -17,8 +17,8 @@ pwd = getenv('SSA_PWD')
 connection_string = 'DRIVER={{SQL Server}};SERVER={0};DATABASE={1};UID={2};'\
                     'PWD={3}'.format(server, db, uid, pwd)
                     
-connection = pyodbc.connect(connection_string)
-cursor = connection.cursor()
+conn = pyodbc.connect(connection_string)
+cursor = conn.cursor()
 
 
 def get_fields(cursor, table):
@@ -120,29 +120,29 @@ next_interval = get_time_int(next_time)
 #    ORDER BY SITE_ID
 #    """
 
-test_query = """SELECT tank_names.*, SITE.NAME FROM 
-        (SELECT last.*, sto.NAME, sto.PRODUCT_NAME
-        FROM (SELECT I1.SITE_ID, I1.STORAGE_ID, I1.STORAGE_TYPE_ID, I1.GROSS_VOLUME, I1.ULLAGE, I1.GROSS_WATER_VOLUME, I1.LAST_UPDATED
-            FROM LOG_INVENTORY I1
-            JOIN (
-                SELECT MAX(LAST_UPDATED) AS LAST_UPDATED, SITE_ID, STORAGE_ID, STORAGE_TYPE_ID
-                FROM LOG_INVENTORY
-                GROUP BY SITE_ID, STORAGE_ID, STORAGE_TYPE_ID) as I2
-                ON I1.SITE_ID = I2.SITE_ID AND
-                I1.STORAGE_ID = I2.STORAGE_ID AND
-                I1.STORAGE_TYPE_ID = I2.STORAGE_TYPE_ID AND
-                I1.LAST_UPDATED = I2.LAST_UPDATED
-            WHERE I1.STORAGE_TYPE_ID <> 102) last
-        RIGHT JOIN STORAGE sto
-        ON last.STORAGE_ID = sto.STORAGE_ID AND
-        last.STORAGE_TYPE_ID = sto.STORAGE_TYPE_ID AND
-        last.SITE_ID = sto.SITE_ID) tank_names
-        RIGHT JOIN SITE
-        ON tank_names.SITE_ID = SITE.SITE_ID
-    ORDER BY tank_names.SITE_ID
-    """
+#test_query = """SELECT tank_names.*, SITE.NAME FROM 
+#        (SELECT last.*, sto.NAME, sto.PRODUCT_NAME
+#        FROM (SELECT I1.SITE_ID, I1.STORAGE_ID, I1.STORAGE_TYPE_ID, I1.GROSS_VOLUME, I1.ULLAGE, I1.GROSS_WATER_VOLUME, I1.LAST_UPDATED
+#            FROM LOG_INVENTORY I1
+#            JOIN (
+#                SELECT MAX(LAST_UPDATED) AS LAST_UPDATED, SITE_ID, STORAGE_ID, STORAGE_TYPE_ID
+#                FROM LOG_INVENTORY
+#                GROUP BY SITE_ID, STORAGE_ID, STORAGE_TYPE_ID) as I2
+#                ON I1.SITE_ID = I2.SITE_ID AND
+#                I1.STORAGE_ID = I2.STORAGE_ID AND
+#                I1.STORAGE_TYPE_ID = I2.STORAGE_TYPE_ID AND
+#                I1.LAST_UPDATED = I2.LAST_UPDATED
+#            WHERE I1.STORAGE_TYPE_ID <> 102) last
+#        RIGHT JOIN STORAGE sto
+#        ON last.STORAGE_ID = sto.STORAGE_ID AND
+#        last.STORAGE_TYPE_ID = sto.STORAGE_TYPE_ID AND
+#        last.SITE_ID = sto.SITE_ID) tank_names
+#        RIGHT JOIN SITE
+#        ON tank_names.SITE_ID = SITE.SITE_ID
+#    ORDER BY tank_names.SITE_ID
+#    """
 
-#test_query = """SELECT STORAGE_ID, STORAGE_TYPE_ID, NAME, PRODUCT_NAME FROM STORAGE WHERE SITE_ID = 1"""
+test_query = """SELECT * FROM LOG_LIMIT_STATUS"""
 
 #cursor.execute(test_query, curr_interval)
 cursor.execute(test_query)
@@ -153,10 +153,15 @@ if rows:
     for row in rows:
         print row
 else:
-    cursor.execute(test_query, prev_interval)
-    rows = cursor.fetchall()
-    if rows:
-        for row in rows:
-            print row
-    else:
-        print "No current or previous interval data found"
+    print "Got nothing"
+#    cursor.execute(test_query, prev_interval)
+#    rows = cursor.fetchall()
+#    if rows:
+#        for row in rows:
+#            print row
+#    else:
+#        print "No current or previous interval data found"
+
+cursor.close()
+del cursor
+conn.close()

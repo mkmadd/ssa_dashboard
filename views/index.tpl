@@ -19,6 +19,8 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    
+%#    <script src="{{ url('static', path='test_javascript.js') }}"></script>
 </head>
 <body>
     <main class="container-fluid">
@@ -32,8 +34,19 @@
                 <div class="col-md-8">
                     <h4>{{store['store_name']}}</h4>
                 </div>
-                <div class="col-md-4 vbottom">
-                    {{store['last_updated']}}
+                <div class="col-md-4">
+                    <div class="row skinny-row">
+                    </div>
+                    <div class="row no-margin-b">
+                        <div class="col-md-12 small-font">
+                            <span id="time" class="{{'bg-blink' if store['time_expired'] else ''}}">{{store['last_update_time']}}</span>
+                        </div>
+                    </div>
+                    <div class="row no-margin-b">
+                        <div class="col-md-12 tiny-font">
+                            <span id="date" class="{{'bg-blink' if store['date_expired'] else ''}}">{{store['last_update_date']}}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             %for tank in store['tanks']:

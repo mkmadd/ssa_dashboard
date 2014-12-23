@@ -96,6 +96,7 @@ def format_stores(rows):
         # Find the row with the earliest time to use at the last update
         earliest = min(tank_info, key=lambda x: x['last_updated'])
         store['last_updated'] = earliest['last_updated'].strftime('%I:%M %p')
+        store['time_expired'] = True
 
         store['tanks'] = tank_info
         stores.append(store)
