@@ -31,7 +31,6 @@
             <div class="row">
                 <div class="col-md-8">
                     <h4>{{store['store_name']}}</h4>
-                    {{store}}
                 </div>
                 <div class="col-md-4 vbottom">
                     {{store['last_updated']}}

@@ -114,7 +114,7 @@ def retrieve_doc():
     rows = ROW_RE.findall(content)
     if rows:
         for row in rows:
-            row = row.split(',')
+            row = row.split('|')
     return rows
     
 
@@ -123,14 +123,14 @@ def retrieve_doc():
 def write_file(rows):
     with open(TEMP_FILE, 'wt') as f:
         for row in rows:
-            f.write(','.join(str(e) for e in row) + '\n')
+            f.write('|'.join(str(e) for e in row) + '\n')  # Commas in data
 
 
 if __name__ == '__main__':
-    rows = get_latest_updates()
-    write_file(rows)
-    status = update_doc()
-    status = retrieve_doc()
+    rows = get_latest_updates()   # Get data from SQL Server
+    write_file(rows)   # Write data to temp file
+    status = update_doc()  # Copy temp file to Google Docs
+    #status = retrieve_doc()
     
     if status == 1:
         print 'Success'

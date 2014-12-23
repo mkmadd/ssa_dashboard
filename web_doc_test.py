@@ -6,7 +6,6 @@ Created on Thu Dec 04 14:27:01 2014
 """
 
 from bottle import route, run, debug, static_file, url, view
-import pyodbc
 from os import getenv
 from datetime import datetime, timedelta
 from natsort import natsorted
@@ -14,7 +13,7 @@ from itertools import groupby
 import gdata.docs.client
 import re
 
-ROW_RE = re.compile('<span>(.*?)</span>')
+ROW_RE = re.compile('<span>(.*?)</span>')  #To extract data from google doc
 TEMP_FILE = 'transitory.txt'
 DOCUMENT_NAME = 'SSA Doc' # google docs name
 username = getenv('GOOG_UID') # google/gmail login id
@@ -24,30 +23,6 @@ server = getenv('SSA_SERVER')
 db = getenv('SSA_DATABASE')
 uid = getenv('SSA_UID')
 pwd = getenv('SSA_PWD')
-
-connection_string = 'DRIVER={{SQL Server}};SERVER={0};DATABASE={1};UID={2};'\
-                    'PWD={3}'.format(server, db, uid, pwd)
-
-conn = pyodbc.connect(connection_string)
-cursor = conn.cursor()
-
-def get_time_int(time):
-    """Return 15-min time interval as a string tuple.
-    
-    Keyword arguments:
-    time -- the time to convert into a fifteen minute interval
-    
-    Return the fifteen minute interval into which the given time falls.  For 
-    example, if current time is 12:06:67, return (12:00:00, 12:14:59.999)
-    """
-
-    minutes = time.minute / 15 * 15
-
-    datehour = time.strftime('%Y-%m-%d %H:')
-    time_floor = datehour + str(minutes) + ':00'
-    time_ceiling = datehour + str(minutes + 14) + ':59.999'
-
-    return (time_floor, time_ceiling)
 
 def load_docs():
     client = gdata.docs.client.DocsClient(source='drive_test')
@@ -71,9 +46,11 @@ def retrieve_doc():
     content = client.download_resource_to_memory(entry)
     rows = ROW_RE.findall(content)
     if rows:
+        sep_rows = []
         for row in rows:
-            row = row.split(',')
-    return rows
+            temp = row.split('|')
+            sep_rows.append(temp)
+    return sep_rows
 
 def fix_name(name):
     fixed_name = ''
@@ -83,6 +60,8 @@ def fix_name(name):
         fixed_name += ' ' + word
     return fixed_name.strip()
 
+# TODO - This function was copied over from bottle_test.py and modified
+# Should do the modifications outside and keep a single function
 # Format raw database output for consumption by index template
 # 0. SITE_ID
 # 1. STORAGE_ID
@@ -96,8 +75,8 @@ def fix_name(name):
 # 9. NAME (store)
 def format_stores(rows):
     sorted_rows = natsorted(rows, key=lambda x: x[-1])
-    print 'ha'
     stores = []
+    print rows[:5]; pass
     for name, tanks in groupby(sorted_rows, lambda x: x[9]):
         store = {}
         store['store_name'] = name
@@ -111,9 +90,9 @@ def format_stores(rows):
             max = float(tank[3]) + float(tank[4]) + float(tank[5])
             new_tank['max_capacity'] = max
             new_tank['capacity'] = (float(tank[3]) + float(tank[5])) / max
-            new_tank['last_updated'] = tank[6]
+            new_tank['last_updated'] = datetime.strptime(tank[6], '%Y-%m-%d %H:%M:%S')
             tank_info.append(new_tank)
-            
+        
         # Find the row with the earliest time to use at the last update
         earliest = min(tank_info, key=lambda x: x['last_updated'])
         store['last_updated'] = earliest['last_updated'].strftime('%I:%M %p')
@@ -126,9 +105,8 @@ def format_stores(rows):
 @view('index')
 def index():
     rows = retrieve_doc()
-    print 'ho'
-    #stores = format_stores(rows)
-    return { 'url': url, 'stores': rows }
+    stores = format_stores(rows)
+    return { 'url': url, 'stores': stores }
 
 @route('/static/:path#.+#', name='static')
 def static(path):
@@ -137,3 +115,5 @@ def static(path):
 debug(True)     # For development use only
 # Reloader for development use only
 run(host='10.0.0.27', port=8080, reloader=True)
+#rows = retrieve_doc()
+#print rows[:5]
