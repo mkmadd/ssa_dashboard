@@ -60,7 +60,7 @@ def get_latest_updates():
                 I1.STORAGE_ID = I2.STORAGE_ID AND
                 I1.STORAGE_TYPE_ID = I2.STORAGE_TYPE_ID AND
                 I1.LAST_UPDATED = I2.LAST_UPDATED
-            WHERE I1.STORAGE_TYPE_ID <> 102) last
+            WHERE I1.STORAGE_TYPE_ID = 100) last
         RIGHT JOIN STORAGE sto
         ON last.STORAGE_ID = sto.STORAGE_ID AND
         last.STORAGE_TYPE_ID = sto.STORAGE_TYPE_ID AND
@@ -98,10 +98,12 @@ def fix_name(name):
 # 7. NAME (tank)
 # 8. PRODUCT_NAME
 # 9. NAME (store)
+# 10. high level
+# 11. low level
+# 12. delivery needed level
 def format_stores(rows):
-    sorted_rows = natsorted(rows, key=lambda x: x[-1])
     stores = []
-    for name, tanks in groupby(sorted_rows, lambda x: x[9]):
+    for name, tanks in groupby(rows, lambda x: x[9]):
         store = {}
         store['store_name'] = name
         
@@ -115,6 +117,9 @@ def format_stores(rows):
             new_tank['max_capacity'] = max
             new_tank['capacity'] = float(tank[3] + tank[5]) / max
             new_tank['last_updated'] = tank[6]
+            new_tank['high'] = float(tank[10]) / max
+            new_tank['low'] = float(tank[11]) / max
+            new_tank['deliv_needed'] = float(tank[12]) / max
             tank_info.append(new_tank)
             
         # Find the row with the earliest time to use at the last update
@@ -133,22 +138,40 @@ def format_stores(rows):
         stores.append(store)
     return stores
 
+def add_levels(rows):
+    temp_rows = []
+    new_rows = []
+    for row in rows:
+        temp_rows.append(tuple(row))
+    with open('tank_data.csv', 'rt') as f:
+        for i, line in enumerate(f):
+            print line
+            items = line.strip().split(',')
+            try:
+                high = float(items[-4])
+            except:
+                high = 0.0
+            try:
+                low = float(items[-3])
+            except:
+                low = 0.0
+            try:
+                deliv_needed = float(items[-1])
+            except:
+                deliv_needed = 0.0
+            new_row = temp_rows[i] + tuple([high, low, deliv_needed])
+            print new_row
+            new_rows.append(new_row)
+    return new_rows
+
 @route('/')
 @view('index')
 def index():
-    # colors: blue #00f, yellow #ff0, green #0f0
-#    test_str = '<b>Hello {{name}}</b>! \n {{names}}\n'\
-#                '<svg height=50><g>'\
-#                '<rect y="0" x="0" width="150" height="20" fill="#000"></rect>'\
-#                '<rect y="1" x="1" width="148" height="18" fill="#fff"></rect>'\
-#                '<rect y="1" x="1" width="5" height="18" fill="#00f"></rect>'\
-#                '<rect y="1" x="6" width="100" height="18" fill="#0f0"></rect>'\
-#                '</g></svg>'
-    #return template(test_str, name=name, names=column_names)
     rows = get_latest_updates()
+    rows = natsorted(rows, key=lambda x: x[-1])
+    rows = add_levels(rows)
     stores = format_stores(rows)
-    #store_boxes = format_stores(rows)
-    return { 'url': url, 'stores': stores } #template('test_template', rows=rows)
+    return { 'url': url, 'stores': stores }
 
 @route('/static/:path#.+#', name='static')
 def static(path):
@@ -157,3 +180,10 @@ def static(path):
 debug(True)     # For development use only
 # Reloader for development use only
 run(host='10.0.0.27', port=8080, reloader=True)
+
+#rows = get_latest_updates()
+#rows = natsorted(rows, key=lambda x: x[-1])
+#
+#rows = add_levels(rows)
+#print rows
+#stores = format_stores(rows)

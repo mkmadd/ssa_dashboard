@@ -3,7 +3,7 @@
 
 <!DOCTYPE html>
 <head>
-    <title>Need Snappier Title</title>
+    <title>Tank Monitor</title>
     <meta http-equiv="refresh" content="900">
 
     <!-- Latest compiled and minified CSS -->
@@ -54,7 +54,7 @@
                     <div class="col-md-4">
                         <div class="row no-margin-b">
                             <div class="col-md-12 no-margin-b">
-                                <meter class="product-meter" min="0.0" low="0.25" optimum="0.75" high="0.5" max="1.0" value="{{tank['capacity']}}"></meter>
+                                <meter class="product-meter" min="0.0" low="{{tank['deliv_needed']}}" optimum="{{tank['high']}}" high="{{tank['low']}}" max="1.0" value="{{tank['capacity']}}"></meter>
                             </div>
                         </div>
                         <div class="row no-margin-t">
