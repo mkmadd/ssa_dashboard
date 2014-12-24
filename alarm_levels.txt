@@ -1,76 +1,60 @@
-Store tank delivery-needed low
-
-1 Unlead A 395 436
-1 Unlead B 395 436
-1 Diesel 395 436
-1 Premium 301 332
-
-3 Unlead 401 542
-3 Premium 301 50
-3 Diesel 301 350
-
-4 Unlead 500 500
-4 Premium 301 250
-4 Diesel 301 250
-
-8 Unleaded 1500 1000
-8 Premium 486 300
-8 Diesel 973 250
-8 Unlead WE 975 500
-8 Unlead WW 975 500
-8 Diesel West 487 500
-
-10 Unleaded 513 640
-10 Premium 304 380
-10 Diesel 302 378
-
-12 Unleaded 300 860
-12 Premium 120 328
-12 Diesel 120 328
-
-13 Diesel 399 750
-13 Unleaded 2266 548
-13 Premium 200 335
-13 Def 1200 750
-
-16 Unleaded 751 698
-16 Premium 296 328
-16 Diesel 219 242
-
-18 Unleaded 508 561
-18 Premium 395 436
-18 Diesel 395 436
-
-20 Unleaded 1995 0
-20 Premium 602 0
-20 Diesel 401 0
-20 Diesel LG 602 0
-
-21 Unleaded 200 465
-21 Diesel 200 330
-
-22 Unleaded 400 443
-22 Premium 400 443
-22 Diesel 400 443
-22 DIESEL 400 443
-
-23 Unlead 1 602 665
-23 Unlead 2 602 665
-23 Premium 193 230
-23 Diesel 291 328
-
-24 Unleaded A 119 50
-24 Unleaded B 119 50
-24 Premium 119 50
-24 Diesel A 238 50
-24 Diesel B 238 50
-
-25 Unlead 1199 1500
-25 Unlead 902 1500
-25 Premium 120 500
-25 Diesel 0 1500
-
-26 Unleaded - 50
-26 Premium - 50
-26 E-15 - 50
-26 Diesel - 50
+Store tank delivery-needed low high-water-level
+1 Unlead_A 395 436 1.5
+1 Unlead_B 395 436 1.5
+1 Diesel 395 436 1.5
+1 Premium 301 332 1.5
+3 Unlead 401 542 2.5
+3 Premium 301 50 2.0
+3 Diesel 301 350 2.0
+4 Unlead 500 500 2.5
+4 Premium 301 250 2.5
+4 Diesel 301 250 3.0
+8 Unleaded 1500 1000 2.0
+8 Premium 486 300 2.0
+8 Diesel 973 250 2.0
+8 Unlead_WE 975 500 1.5
+8 Unlead_WW 975 500 1.5
+8 Diesel_West 487 500 1.5
+10 Unleaded 513 640 2.5
+10 Premium 304 380 2.0
+10 Diesel 302 378 2.5
+12 Unleaded 300 860 2.0
+12 Premium 120 328 2.0
+12 Diesel 120 328 2.0
+13 Diesel 399 750 3.0
+13 Unleaded 2266 548 3.0
+13 Premium 200 335 3.0
+13 Def 1200 750 -
+16 Unleaded 751 698 2.0
+16 Premium 296 328 1.0
+16 Diesel 219 242 2.0
+18 Unleaded 508 561 2.0
+18 Premium 395 436 2.0
+18 Diesel 395 436 2.0
+20 Unleaded 1995 0 1.4
+20 Premium 602 0 1.4
+20 Diesel 401 0 1.4
+20 Diesel_LG 602 0 1.4
+21 Unleaded 200 465 2.5
+21 Diesel 200 330 2.5
+22 Unleaded 400 443 1.5
+22 Premium 400 443 1.5
+22 Diesel 400 443 2.5
+22 DIESEL 400 443 2.5
+23 Unlead_1 602 665 2.0
+23 Unlead_2 602 665 2.0
+23 Premium 193 230 2.0
+23 Diesel 291 328 2.0
+24 Unleaded_A 119 50 3.0
+24 Unleaded_B 119 50 3.0
+24 Premium 119 50 3.0
+24 Diesel_A 238 50 2.5
+24 Diesel_B 238 50 2.5
+25 Unlead 1199 1500 1.8
+25 Unlead 902 1500 2.0
+25 Premium 120 500 2.0
+25 Diesel 0 1500 2.0
+26 Unleaded - 50 -
+26 Premium - 50 -
+26 E-15 - 50 -
+26 Diesel - 50 -

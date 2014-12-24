@@ -103,6 +103,7 @@ def fix_name(name):
 # 11. high level
 # 12. low level
 # 13. delivery needed level
+# 14. water level limit
 def format_stores(rows):
     stores = []
     for name, tanks in groupby(rows, lambda x: x[10]):
@@ -125,6 +126,7 @@ def format_stores(rows):
             new_tank['low'] = deliv_needed * 1.25  # Turn red at 25% buffer
             new_tank['high'] = deliv_needed * 1.50 # Turn yellow at 50% buffer
             new_tank['optimum'] = new_tank['high'] + 1  # Green above high
+            new_tank['water_level_limit'] = tank[14]
             tank_info.append(new_tank)
             
         # Find the row with the earliest time to use at the last update
@@ -156,18 +158,22 @@ def add_levels(rows):
             print line
             items = line.strip().split(',')
             try:
-                high = float(items[-4])
+                high = float(items[-5])
             except:
                 high = 0.0
             try:
-                low = float(items[-3])
+                low = float(items[-4])
             except:
                 low = 0.0
             try:
-                deliv_needed = float(items[-1])
+                deliv_needed = float(items[-2])
             except:
                 deliv_needed = 0.0
-            new_row = temp_rows[i] + tuple([high, low, deliv_needed])
+            try:
+                water_level_limit = float(items[-1])
+            except:
+                water_level_limit = 3.0
+            new_row = temp_rows[i] + tuple([high, low, deliv_needed, water_level_limit])
             print new_row
             new_rows.append(new_row)
     return new_rows

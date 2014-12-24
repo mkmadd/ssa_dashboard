@@ -52,10 +52,23 @@ with open('tnksetup.tsv', 'rt') as f:
 del data[36]    # Appears to be a manifold that doesn't show up elsewhere
 data = data[4:] + data[:4]   # Store 26 comes first, want it last
 
+with open('alarm_levels.txt', 'rt') as f:
+    water_levels = []
+    f.readline()
+    for line in f:
+        water_level = line.strip().split()[-1]
+        if water_level == '-':
+            water_level = 0.0
+        else:
+            water_level = float(water_level)
+        water_levels.append({ 'water_level_limit': water_level })
+
+water_data = pd.DataFrame.from_records(water_levels)
+
 col_names = ['capacity', 'diameter', 'max_product', 'high', 'low', 'overfill', 'delivery_limit']
 tank_data = pd.DataFrame.from_records(data, columns=col_names)
 
-final = pd.concat([tanks, tank_data], axis=1)
+final = pd.concat([tanks, tank_data, water_data], axis=1)
 with open('tank_data.csv', 'wt') as f:
     f.write(final.to_csv(header=False, index=False))
 

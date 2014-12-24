@@ -59,7 +59,7 @@
                         </div>
                         <div class="row no-margin-t">
                             <div class="col-md-12">
-                                <meter class="water-meter" min="0.0" low="0.5" optimum=".25" high="1.0" max="2.0" value="{{tank['water_level']}}"></meter>
+                                <meter class="water-meter" min="0.0" low="{{0.8*tank['water_level_limit']}}" optimum=".25" high="{{0.9*tank['water_level_limit']}}" max="{{tank['water_level_limit']+1}}" value="{{tank['water_level']}}"></meter>
                             </div>
                         </div>
                     </div>
