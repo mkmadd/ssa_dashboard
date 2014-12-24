@@ -49,7 +49,7 @@ def get_latest_updates():
     test_query = """SELECT tank_names.*, SITE.NAME FROM 
         (SELECT last.*, sto.NAME, sto.PRODUCT_NAME
         FROM (SELECT I1.SITE_ID, I1.STORAGE_ID, I1.STORAGE_TYPE_ID, 
-        I1.GROSS_VOLUME, I1.ULLAGE, I1.GROSS_WATER_VOLUME, I1.LAST_UPDATED
+        I1.GROSS_VOLUME, I1.ULLAGE, I1.WATER_LEVEL, I1.LAST_UPDATED
             FROM LOG_INVENTORY I1
             JOIN (
                 SELECT MAX(LAST_UPDATED) AS LAST_UPDATED, SITE_ID, 
@@ -112,14 +112,15 @@ def format_stores(rows):
             new_tank = {}
             new_tank['tank_name'] = fix_name(tank[7])
             new_tank['product_name'] = fix_name(tank[8])
-            new_tank['water_vol'] = tank[5]
+            new_tank['water_level'] = tank[5]
             max = tank[3] + tank[4] + tank[5]
             new_tank['max_capacity'] = max
-            new_tank['capacity'] = float(tank[3] + tank[5]) / max
+            new_tank['capacity'] = float(tank[3] + tank[5])
             new_tank['last_updated'] = tank[6]
-            new_tank['high'] = float(tank[10]) / max
-            new_tank['low'] = float(tank[11]) / max
-            new_tank['deliv_needed'] = float(tank[12]) / max
+            deliv_needed = tank[11] if tank[12] < 0.5 else tank[12]
+            new_tank['low'] = deliv_needed * 1.25  # Turn red at 25% buffer
+            new_tank['high'] = deliv_needed * 1.50 # Turn yellow at 50% buffer
+            new_tank['optimum'] = new_tank['high'] + 1  # Green above high
             tank_info.append(new_tank)
             
         # Find the row with the earliest time to use at the last update

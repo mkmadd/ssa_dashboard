@@ -54,12 +54,12 @@
                     <div class="col-md-4">
                         <div class="row no-margin-b">
                             <div class="col-md-12 no-margin-b">
-                                <meter class="product-meter" min="0.0" low="{{tank['deliv_needed']}}" optimum="{{tank['high']}}" high="{{tank['low']}}" max="1.0" value="{{tank['capacity']}}"></meter>
+                                <meter class="product-meter" min="0.0" low="{{tank['low']}}" optimum="{{tank['optimum']}}" high="{{tank['high']}}" max="{{tank['max_capacity']}}" value="{{tank['capacity']}}"></meter>
                             </div>
                         </div>
                         <div class="row no-margin-t">
                             <div class="col-md-12">
-                                <meter class="water-meter" min="0.0" low="50" optimum="25" high="100" max="200.0" value="{{tank['water_vol']}}"></meter>
+                                <meter class="water-meter" min="0.0" low="0.5" optimum=".25" high="1.0" max="2.0" value="{{tank['water_level']}}"></meter>
                             </div>
                         </div>
                     </div>
