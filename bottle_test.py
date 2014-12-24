@@ -49,7 +49,8 @@ def get_latest_updates():
     test_query = """SELECT tank_names.*, SITE.NAME FROM 
         (SELECT last.*, sto.NAME, sto.PRODUCT_NAME
         FROM (SELECT I1.SITE_ID, I1.STORAGE_ID, I1.STORAGE_TYPE_ID, 
-        I1.GROSS_VOLUME, I1.ULLAGE, I1.WATER_LEVEL, I1.LAST_UPDATED
+        I1.GROSS_VOLUME, I1.ULLAGE, I1.GROSS_WATER_VOLUME, I1.WATER_LEVEL, 
+        I1.LAST_UPDATED
             FROM LOG_INVENTORY I1
             JOIN (
                 SELECT MAX(LAST_UPDATED) AS LAST_UPDATED, SITE_ID, 
@@ -94,30 +95,33 @@ def fix_name(name):
 # 3. GROSS_VOLUME
 # 4. ULLAGE
 # 5. GROSS_WATER_VOLUME
-# 6. LAST_UPDATED
-# 7. NAME (tank)
-# 8. PRODUCT_NAME
-# 9. NAME (store)
-# 10. high level
-# 11. low level
-# 12. delivery needed level
+# 6. WATER_LEVEL
+# 7. LAST_UPDATED
+# 8. NAME (tank)
+# 9. PRODUCT_NAME
+# 10. NAME (store)
+# 11. high level
+# 12. low level
+# 13. delivery needed level
 def format_stores(rows):
     stores = []
-    for name, tanks in groupby(rows, lambda x: x[9]):
+    for name, tanks in groupby(rows, lambda x: x[10]):
         store = {}
         store['store_name'] = name
         
         tank_info = []
         for tank in tanks:
             new_tank = {}
-            new_tank['tank_name'] = fix_name(tank[7])
-            new_tank['product_name'] = fix_name(tank[8])
-            new_tank['water_level'] = tank[5]
+            new_tank['tank_name'] = fix_name(tank[8])
+            new_tank['product_name'] = fix_name(tank[9])
+            new_tank['water_level'] = tank[6]
             max = tank[3] + tank[4] + tank[5]
             new_tank['max_capacity'] = max
             new_tank['capacity'] = float(tank[3] + tank[5])
-            new_tank['last_updated'] = tank[6]
-            deliv_needed = tank[11] if tank[12] < 0.5 else tank[12]
+            new_tank['last_updated'] = tank[7]
+            # If no delivery needed number, use low level
+            deliv_needed = tank[12] if tank[13] < 0.5 else tank[13]
+            # Calculate params needed for meters
             new_tank['low'] = deliv_needed * 1.25  # Turn red at 25% buffer
             new_tank['high'] = deliv_needed * 1.50 # Turn yellow at 50% buffer
             new_tank['optimum'] = new_tank['high'] + 1  # Green above high
@@ -127,6 +131,8 @@ def format_stores(rows):
         earliest = min(tank_info, key=lambda x: x['last_updated'])
         store['last_update_time'] = earliest['last_updated'].strftime('%I:%M %p')
         store['last_update_date'] = earliest['last_updated'].strftime("%b %d, '%y")
+        
+        # If old date/time, set expired flags
         if earliest['last_updated'].date() != datetime.today().date():
             store['date_expired'] = True
         else:
@@ -135,6 +141,7 @@ def format_stores(rows):
             store['time_expired'] = True
         else:
             store['time_expired'] = False
+            
         store['tanks'] = tank_info
         stores.append(store)
     return stores
