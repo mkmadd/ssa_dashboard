@@ -116,6 +116,8 @@ def format_stores(rows):
             new_tank['tank_name'] = fix_name(tank[8])
             new_tank['product_name'] = fix_name(tank[9])
             new_tank['water_level'] = tank[6]
+            new_tank['gross_volume'] = int(tank[3])
+            new_tank['ullage'] = int(tank[4])
             max = tank[3] + tank[4] + tank[5]
             new_tank['max_capacity'] = max
             new_tank['capacity'] = float(tank[3] + tank[5])

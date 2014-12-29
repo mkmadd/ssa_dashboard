@@ -27,7 +27,7 @@
     %i = 0
     %for store in stores:
         %if i % 4 == 0:
-            <div class="row">
+            <div class="row store-row">
         %end
         <div class="col-md-3">
             <div class="row">
@@ -49,25 +49,39 @@
                     </div>
                 </div>
             </div>
+            <table style="width:100%">
+                <tr>
+                    <th>Product</th>
+                    <th>Ullage</th>
+                </tr>
             %for tank in store['tanks']:
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="row no-margin-b">
-                            <div class="col-md-12 no-margin-b">
-                                <meter class="product-meter" min="0.0" low="{{tank['low']}}" optimum="{{tank['optimum']}}" high="{{tank['high']}}" max="{{tank['max_capacity']}}" value="{{tank['capacity']}}"></meter>
-                            </div>
-                        </div>
-                        <div class="row no-margin-t">
-                            <div class="col-md-12">
-                                <meter class="water-meter" min="0.0" low="{{0.8*tank['water_level_limit']}}" optimum=".25" high="{{0.9*tank['water_level_limit']}}" max="{{tank['water_level_limit']+1}}" value="{{tank['water_level']}}"></meter>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8 tank-name">
-                        {{'{0} ({1})'.format(tank['tank_name'], tank['product_name'])}}
-                    </div>
-                </div>
+%#                <div class="row">
+%#                    <div class="col-md-4">
+%#                        <div class="row no-margin-b">
+%#                            <div class="col-md-12 no-margin-b">
+%#                                <meter class="product-meter" min="0.0" low="{{tank['low']}}" optimum="{{tank['optimum']}}" high="{{tank['high']}}" max="{{tank['max_capacity']}}" value="{{tank['capacity']}}"></meter>
+%#                            </div>
+%#                        </div>
+%#                       <div class="row no-margin-t">
+%#                            <div class="col-md-12">
+%#                                <meter class="water-meter" min="0.0" low="{{0.8*tank['water_level_limit']}}" optimum=".25" high="{{0.9*tank['water_level_limit']}}" max="{{tank['water_level_limit']+1}}" value="{{tank['water_level']}}"></meter>
+%#                            </div>
+%#                            <div class="col-md-12">
+                                    <tr>
+                                        <td>{{tank['gross_volume']}}</td>
+                                        <td>{{tank['ullage']}}</td>
+                                        <td>{{'{0} ({1})'.format(tank['tank_name'], tank['product_name'])}}</td>
+                                    </tr>
+%#                                </table>
+%#                            </div>
+%#                        </div>
+%#                    </div>
+%#                    <div class="col-md-8 tank-name">
+%#                        {{'{0} ({1})'.format(tank['tank_name'], tank['product_name'])}}
+%#                    </div>
+%#                </div>
             %end
+            </table>
         </div>
         %if i % 4 == 3:
             </div>

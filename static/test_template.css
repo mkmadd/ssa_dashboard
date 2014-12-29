@@ -58,9 +58,13 @@ h4 {
     100% {background: white; color: black;}
 }
 
+.store-row {
+    padding: 10px;
+}
+
+/*
 .water-meter {
     -webkit-appearance: none; //Crucial, this will disable the default styling in Webkit browsers
-    height: 5px;
 }
 
 meter {
@@ -106,3 +110,4 @@ meter::-webkit-meter-even-less-good-value {
     height: 100%;
     box-sizing: border-box;
 }
+*/
