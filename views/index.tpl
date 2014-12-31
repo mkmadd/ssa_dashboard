@@ -51,7 +51,8 @@
             </div>
             <table style="width:100%">
                 <tr>
-                    <th>Product</th>
+                    <th>Volume</th>
+                    <th></th>
                     <th>Ullage</th>
                 </tr>
             %for tank in store['tanks']:
@@ -69,8 +70,8 @@
 %#                            <div class="col-md-12">
                                     <tr>
                                         <td>{{tank['gross_volume']}}</td>
-                                        <td>{{tank['ullage']}}</td>
                                         <td>{{'{0} ({1})'.format(tank['tank_name'], tank['product_name'])}}</td>
+                                        <td>{{tank['ullage']}}</td>
                                     </tr>
 %#                                </table>
 %#                            </div>
