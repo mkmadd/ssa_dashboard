@@ -12,6 +12,8 @@ from datetime import datetime, timedelta
 from natsort import natsorted
 from itertools import groupby
 
+EXPIRED_TIME = 17   # Number of minutes after which a time is expired
+
 server = getenv('SSA_SERVER')
 db = getenv('SSA_DATABASE')
 uid = getenv('SSA_UID')
@@ -61,7 +63,7 @@ def get_latest_updates():
                 I1.STORAGE_ID = I2.STORAGE_ID AND
                 I1.STORAGE_TYPE_ID = I2.STORAGE_TYPE_ID AND
                 I1.LAST_UPDATED = I2.LAST_UPDATED
-            WHERE I1.STORAGE_TYPE_ID = 100) last
+            WHERE I1.STORAGE_TYPE_ID <> 102) last
         RIGHT JOIN STORAGE sto
         ON last.STORAGE_ID = sto.STORAGE_ID AND
         last.STORAGE_TYPE_ID = sto.STORAGE_TYPE_ID AND
@@ -141,7 +143,7 @@ def format_stores(rows):
             store['date_expired'] = True
         else:
             store['date_expired'] = False
-        if (earliest['last_updated'] + timedelta(minutes=15)) < datetime.now():
+        if (earliest['last_updated'] + timedelta(minutes=EXPIRED_TIME)) < datetime.now():
             store['time_expired'] = True
         else:
             store['time_expired'] = False
@@ -175,7 +177,8 @@ def add_levels(rows):
                 water_level_limit = float(items[-1])
             except:
                 water_level_limit = 3.0
-            new_row = temp_rows[i] + tuple([high, low, deliv_needed, water_level_limit])
+            new_row = temp_rows[i] + tuple([high, low, deliv_needed, 
+                                            water_level_limit])
             print new_row
             new_rows.append(new_row)
     return new_rows
