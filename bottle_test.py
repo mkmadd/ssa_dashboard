@@ -102,6 +102,7 @@ def fix_name(name):
 # 8. NAME (tank)
 # 9. PRODUCT_NAME
 # 10. NAME (store)
+# TODO: fix - 11 - 14 added by add_levels(), currently not available
 # 11. high level
 # 12. low level
 # 13. delivery needed level
@@ -124,13 +125,13 @@ def format_stores(rows):
             new_tank['max_capacity'] = max
             new_tank['capacity'] = float(tank[3] + tank[5])
             new_tank['last_updated'] = tank[7]
-            # If no delivery needed number, use low level
-            deliv_needed = tank[12] if tank[13] < 0.5 else tank[13]
-            # Calculate params needed for meters
-            new_tank['low'] = deliv_needed * 1.25  # Turn red at 25% buffer
-            new_tank['high'] = deliv_needed * 1.50 # Turn yellow at 50% buffer
-            new_tank['optimum'] = new_tank['high'] + 1  # Green above high
-            new_tank['water_level_limit'] = tank[14]
+#            # If no delivery needed number, use low level
+#            deliv_needed = tank[12] if tank[13] < 0.5 else tank[13]
+#            # Calculate params needed for meters
+#            new_tank['low'] = deliv_needed * 1.25  # Turn red at 25% buffer
+#            new_tank['high'] = deliv_needed * 1.50 # Turn yellow at 50% buffer
+#            new_tank['optimum'] = new_tank['high'] + 1  # Green above high
+#            new_tank['water_level_limit'] = tank[14]
             tank_info.append(new_tank)
             
         # Find the row with the earliest time to use at the last update
@@ -152,6 +153,9 @@ def format_stores(rows):
         stores.append(store)
     return stores
 
+# tank_data.csv doesn't contain manifold info, so this function messes with
+# data from get_latest_updates()
+# TODO: fix so it plays nicely with manifolds (STORAGE_TYPE_ID = 101)
 def add_levels(rows):
     temp_rows = []
     new_rows = []
@@ -179,7 +183,6 @@ def add_levels(rows):
                 water_level_limit = 3.0
             new_row = temp_rows[i] + tuple([high, low, deliv_needed, 
                                             water_level_limit])
-            print new_row
             new_rows.append(new_row)
     return new_rows
 
@@ -188,7 +191,7 @@ def add_levels(rows):
 def index():
     rows = get_latest_updates()
     rows = natsorted(rows, key=lambda x: x[-1])
-    rows = add_levels(rows)
+#    rows = add_levels(rows)
     stores = format_stores(rows)
     return { 'url': url, 'stores': stores }
 
@@ -202,7 +205,7 @@ run(host='10.0.0.27', port=8080, reloader=True)
 
 #rows = get_latest_updates()
 #rows = natsorted(rows, key=lambda x: x[-1])
-#
+#print rows
 #rows = add_levels(rows)
 #print rows
 #stores = format_stores(rows)
