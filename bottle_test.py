@@ -171,6 +171,42 @@ def get_latest_updates():
     
     return rows
 
+    
+def get_todays_active_alarms():
+    query = """
+        SELECT site.NAME, a.CAT_NAME, 
+            CONCAT(a.DEV_NAME, ' ', a.DEV) as DEV_NAME, a.DEVICE_NAME, 
+            a.CODE_NAME, a.STAT_NAME, a.DATE_TIME, a.LAST_UPDATED FROM
+        	(SELECT b.*, stat.NAME as STAT_NAME FROM
+        		(SELECT z.*, devs.NAME as DEV_NAME FROM
+        			(SELECT y.*, cats.NAME as CAT_NAME FROM 
+        				(SELECT x.SITE_ID, codes.CATEGORY, codes.DEVICE, 
+                                 x.DEVICE as DEV, x.DEVICE_NAME, 
+                                 codes.NAME as CODE_NAME, x.STATUS, 
+                                 x.DATE_TIME, x.LAST_UPDATED
+        					FROM (SELECT SITE_ID, CODE, DATE_TIME, DEVICE,
+        						STATUS, LAST_UPDATED, DEVICE_NAME
+        						FROM LOG_ALARMS
+        						WHERE IS_ACTIVE = 1 AND CODE <> 7112 AND
+        						CONVERT(DATE, LAST_UPDATED) = CONVERT(DATE, GetDate())) x
+        					JOIN CONST_ALARM_CODES codes ON x.CODE = codes.CODE) y
+        			JOIN CONST_ALARM_CATEGORIES cats ON y.CATEGORY = cats.CODE) z
+        		JOIN CONST_ALARM_DEVICES devs ON z.DEVICE = devs.CODE) b
+        	JOIN CONST_ALARM_STATUS_LIST as stat ON b.STATUS = stat.CODE) a
+        JOIN SITE ON a.SITE_ID = SITE.SITE_ID
+    """
+    
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    del cursor
+    conn.close()
+    
+    return rows
+    
+
 def fix_name(name):
     fixed_name = ''
     for word in name.strip().split():
@@ -293,9 +329,18 @@ def add_levels(rows):
 def index():
     rows = get_latest_updates()
     rows = natsorted(rows, key=lambda x: x[-1])
+    alarms = get_todays_active_alarms()
 #    rows = add_levels(rows)
     stores = format_stores(rows)
-    return { 'url': url, 'stores': stores }
+    return { 'url': url, 'stores': stores, 'alarms': alarms }
+    
+@route('/alarms')
+@view('alarm')
+def show_alarms():
+    alarms = get_todays_active_alarms()
+    alarms = natsorted(alarms, key=lambda x: x[0])
+    #alarms = format_alarms(alarms)
+    return { 'url': url, 'alarms': alarms}
 
 @route('/static/:path#.+#', name='static')
 def static(path):
@@ -306,6 +351,7 @@ debug(True)     # For development use only
 run(host='10.0.0.27', port=8080, reloader=True)
 
 #rows = get_latest_updates()
+#rows = get_todays_active_alarms()
 #rows = natsorted(rows, key=lambda x: x[-1])
 #print rows
 #rows = add_levels(rows)

@@ -24,6 +24,12 @@
 </head>
 <body>
     <main class="container-fluid">
+    <div class="row store-row">
+        <div class="col-md-4">
+            <a class="btn {{'btn-default' if not len(alarms) else 'btn-danger'}} btn-xs"
+                href="/alarms">Alarms</a>
+        </div>
+    </div>
     %i = 0
     %for store in stores:
         %if i % 4 == 0:
@@ -89,6 +95,5 @@
         %end
         %i += 1
     %end
-    </table>
     </main>
 </body>
