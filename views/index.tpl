@@ -69,7 +69,7 @@
 %#                            </div>
 %#                            <div class="col-md-12">
                                     <tr>
-                                        <td>{{tank['gross_volume']}}</td>
+                                        <td><span class="{{'bg-blink' if tank['tank_low'] else ''}}">{{tank['gross_volume']}}</span></td>
                                         <td>{{'{0} ({1})'.format(tank['tank_name'], tank['product_name'])}}</td>
                                         <td>{{tank['ullage']}}</td>
                                     </tr>
