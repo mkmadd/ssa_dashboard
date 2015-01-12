@@ -5,7 +5,7 @@ Created on Thu Dec 04 14:27:01 2014
 @author: Michael K. Maddeford
 """
 
-from bottle import route, run, debug, static_file, url, view
+from bottle import route, request, run, debug, static_file, url, view
 import pyodbc
 from os import getenv
 from datetime import datetime, timedelta
@@ -241,6 +241,8 @@ def format_stores(rows):
         tank_info = []
         for tank in tanks:
             new_tank = {}
+            new_tank['site_id'] = tank[0]
+            new_tank['storage_id'] = tank[1]
             new_tank['tank_name'] = fix_name(tank[8])
             new_tank['product_name'] = fix_name(tank[9])
 #            new_tank['water_level'] = tank[6]
@@ -324,6 +326,35 @@ def add_levels(rows):
             new_rows.append(new_row)
     return new_rows
 
+
+# Format raw file input for consumption by edit template
+# 0. NAME (store)
+# 1. SITE_ID
+# 2. STORAGE_ID
+# 3. STORAGE_TYPE_ID
+# 4. NAME (tank)
+# 5. PRODUCT_NAME
+# 6. warning_level
+def format_warning_levels(rows):
+    stores = []
+    for name, tanks in groupby(rows, lambda x: x[0]):
+        store = {}
+        store['store_name'] = name
+        
+        tank_info = []
+        for tank in tanks:
+            new_tank = {}
+            new_tank['site_id'] = tank[1]
+            new_tank['storage_id'] = tank[2]
+            new_tank['tank_name'] = tank[4]
+            new_tank['product_name'] = tank[5]
+            new_tank['warning_level'] = tank[6]
+            tank_info.append(new_tank)
+            
+        store['tanks'] = tank_info
+        stores.append(store)
+    return stores
+
 @route('/')
 @view('index')
 def index():
@@ -341,6 +372,32 @@ def show_alarms():
     alarms = natsorted(alarms, key=lambda x: x[0])
     #alarms = format_alarms(alarms)
     return { 'url': url, 'alarms': alarms}
+    
+@route('/edit')
+@view('edit')
+def show_edit():
+    rows = []
+    with open('warning_levels.txt', 'rt') as f:
+        for line in f:
+            row = line.strip().split('|')
+            rows.append(row)
+    rows = natsorted(rows, key=lambda x: x[0])
+    stores = format_warning_levels(rows)
+    return { 'url': url, 'stores': stores }
+    
+@route('/edit', method='POST')
+def do_edit():
+    rows = []
+    with open('warning_levels.txt', 'rt') as f:
+        for line in f:
+            row = line.strip().split('|')
+            rows.append(row)
+    rows = natsorted(rows, key=lambda x: x[0])
+    stores = format_warning_levels(rows)
+    for store in stores:
+        for tank in store['tanks']:
+            tank['warning_level'] = request.forms.get('id_{0}_{1}'.format(tank['site_id'], tank['storage_id']))
+    return repr(stores)
 
 @route('/static/:path#.+#', name='static')
 def static(path):

@@ -1,0 +1,65 @@
+Shortstop 8|1|1|100|Tank 1|Unleaded|4815
+Shortstop 8|1|2|100|Tank 2|Premium|1012
+Shortstop 8|1|3|100|Tank 3|Diesel|2117
+Shortstop 8|1|4|100|Tank 4|Unlead WE|1404
+Shortstop 8|1|5|100|Tank 5|Unlead WW|3500
+Shortstop 8|1|6|100|Tank 6|Diesel West|742
+Shortstop 26|2|1|100|Unleaded Tank|Unleaded|2107
+Shortstop 26|2|2|100|Premium Tank|Premium|614
+Shortstop 26|2|3|100|E-15 Tank|E-15|589
+Shortstop 26|2|4|100|Diesel Tank|Diesel|768
+Shortstop 3|3|1|100|Tank 1|Unlead|1453
+Shortstop 3|3|2|100|Tank 2|Premium|536
+Shortstop 3|3|3|100|Tank 3|Diesel|500
+Shortstop 4|4|1|100|Tank 1|Unlead|3765
+Shortstop 4|4|2|100|Tank 2|Premium|771
+Shortstop 4|4|3|100|Tank 3|Diesel|3120
+Shortstop 10|6|1|100|Tank 1|Unleaded|4028
+Shortstop 10|6|2|100|Tank 2|Premium|790
+Shortstop 10|6|3|100|Tank 3|Diesel|874
+Shortstop 12|7|1|100|Tank 1|Unleaded|4510
+Shortstop 12|7|2|100|Tank 2|Premium|622
+Shortstop 12|7|3|100|Tank 3|Diesel|657
+Shortstop 13|8|1|100|Tank 1|Diesel|6622
+Shortstop 13|8|2|100|Tank 2|Unleaded|9506
+Shortstop 13|8|3|100|Tank 3|Premium|1133
+Shortstop 13|8|4|100|Tank 4|Def|1500
+Shortstop 16|9|1|100|Tank 1|Unleaded|4998
+Shortstop 16|9|2|100|Tank 2|Premium|794
+Shortstop 16|9|3|100|Tank 3|Diesel|707
+Shortstop 18|10|1|100|Tank 1|Unleaded|2782
+Shortstop 18|10|2|100|Tank 2|Premium|633
+Shortstop 18|10|3|100|Tank 3|Diesel|850
+Shortstop 20|11|1|100|Tank 1|Unleaded|6991
+Shortstop 20|11|2|100|Tank 2|Premium|687
+Shortstop 20|11|3|100|Tank 3|Diesel|890
+Shortstop 20|11|4|100|Tank 4|Diesel LG|1235
+Shortstop 21|12|1|100|Tank 1|Unleaded|2429
+Shortstop 21|12|2|100|Tank 2|Diesel|848
+Shortstop 22|13|1|100|Tank 1|Unleaded|2360
+Shortstop 22|13|2|100|Tank 2|Premium|500
+Shortstop 22|13|3|100|Tank 3|Diesel|0
+Shortstop 22|13|4|100|Tank 4|Diesel|0
+Shortstop 22|13|3|101|Manifold|Diesel, Diesel|3766
+Shortstop 23|14|1|100|Tank 1|Unlead 1|0
+Shortstop 23|14|2|100|Tank 2|Unlead 2|0
+Shortstop 23|14|3|100|Tank 3|Premium|803
+Shortstop 23|14|4|100|Tank 4|Diesel|610
+Shortstop 23|14|1|101|Manifold|Unlead 1, Unlead 2|6972
+Shortstop 24|15|1|100|Tank 1|Unleaded A|0
+Shortstop 24|15|2|100|Tank 2|Unleaded B|0
+Shortstop 24|15|3|100|Tank 3|Premium|791
+Shortstop 24|15|4|100|Tank 4|Diesel A|0
+Shortstop 24|15|5|100|Tank 5|Diesel B|0
+Shortstop 24|15|1|101|Manifold|Unleaded A, Unleaded B|4356
+Shortstop 24|15|4|101|Manifold|Diesel A, Diesel B|4142
+Shortstop 25|16|1|100|Tank 1|Unlead|0
+Shortstop 25|16|2|100|Tank 2|Unlead|0
+Shortstop 25|16|3|100|Tank 3|Premium|528
+Shortstop 25|16|4|100|Tank 4|Diesel|3422
+Shortstop 25|16|1|101|Manifold|Unlead|2733
+Shortstop 1|17|1|100|Tank 1|Unlead A|0
+Shortstop 1|17|2|100|Tank 2|Unlead B|0
+Shortstop 1|17|3|100|Tank 3|Diesel|716
+Shortstop 1|17|4|100|Tank 4|Prem.|500
+Shortstop 1|17|1|101|Manifold|Unlead A, Unlead B|4128
