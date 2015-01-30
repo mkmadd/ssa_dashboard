@@ -136,4 +136,3 @@ if __name__ == '__main__':
         print 'Success'
     elif status == 0:
         print 'Crushing failure!'
-    
